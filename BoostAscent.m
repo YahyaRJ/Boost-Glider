@@ -50,10 +50,10 @@ for n = 1:Count
     % MODIFY THIS SECTION
     % /////////////////////////////////////////////////////////////////////////
     %% Make variables for the constants vector
-    m_empty = ; % [kg] empty weight of the vehicle (not including the water)
-    m0 = ; % Note that the input water volume should be in ml which approx = grams
-    Wx = ; % [m/s] Wind velocity in the x-direction
-    Wy = ; % [m/s] Wind velocity in the y-direction
+    m_empty = Weight_Data.Wo(n) - Weight_Data.W_water(n); % [kg] empty weight of the vehicle (not including the water)
+    m0 = waterSize; % Note that the input water volume should be in ml which approx = grams
+    Wx = cosd(Design_Input.Wind_Az(n)) * Design_Input.V_wind(n); % [m/s] Wind velocity in the x-direction
+    Wy = sind(Design_Input.Wind_Az(n)) * Design_Input.V_wind(n); % [m/s] Wind velocity in the y-direction
 
     % /////////////////////////////////////////////////////////////////////////
     % END OF SECTION TO MODIFY

@@ -115,6 +115,7 @@ InducedDrag_Data = ...
 [ThrustCurves, Time] = Thrust();
 
 % Call Boost-Ascent Flight Dynamics Model
+[apogee, hApogee, stateStruct] = BoostAscent(Design_Input, ATMOS, Parasite_Drag_Data, Weight_Data, ThrustCurves, Time, Count);
 
 % Call Glide Flight Dynamics Model
 % [GlideRange] = GlideDescent(LD_mod1, apogee, Design_Input, ATMOS, Weight_Data, WingLiftModel, WingLiftCurve, Count);
