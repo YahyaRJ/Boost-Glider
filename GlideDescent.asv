@@ -45,23 +45,22 @@ for n = 1:Count
     LDmax(n) = M;
 
     %% Find best glide range
-    bestGlide(n) = LDmax(n) .* apogee;
+    %bestGlide(n) = LDmax(n) .* apogee;
 
     %% GLide angle
     theta(n) = atand(1 ./ LDmax(n)); %in degrees
 
     %% Find Best Glide CL and Velocity
     CL_LDmax(n) = WingLiftCurve{n,I};
-    %subtract water and compressed air weight(air not even there?!)
+    %subtract water and compressed air weight(water weight not even there)
     weight = Weight_Data.Wo(n) - Weight_Data.W_water(n);
     V_LDmax(n) = sqrt((2.*weight) ./ (ATMOS.rho(n) .* CL_LDmax(n) .* Design_Input.Sref_w(n)));   
     Vsink(n) = V_LDmax(n) .* sind(theta(n));
     angles_of_attack = -5:12;
-    alpha = angles_of_attack(I); %angle of attack at which LD is max
-    AoA_LDmax(n) = (CL_LDmax(n) ./ alpha) + WingLiftModel.AoA_0(n);
+    AoA_LDmax(n) = (CL_LDmax(n) ./ angles_of_attack(I) ) + WingLiftModel.AoA_0(n);
 
     %% Find Wing Loading
-    WingLoading(n) = weight ./ Design_Input.Sref_w(n);
+    WingLoading(n) = 1;
     % /////////////////////////////////////////////////////////////////////////
     % END OF SECTION TO MODIFY
     % /////////////////////////////////////////////////////////////////////////

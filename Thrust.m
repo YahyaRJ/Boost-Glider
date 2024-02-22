@@ -178,13 +178,13 @@ for N = 1:numConfigs % use upper case N to distiguish that it is counting someth
     tot_data = tot_data./num;
 
 
-    std_thrustTime(N) = std(Actual_Thrust_Time)
-    avg_thrustTime(N) = mean(Actual_Thrust_Time)
+    std_thrustTime(N) = std(Actual_Thrust_Time);
+    avg_thrustTime(N) = mean(Actual_Thrust_Time);
     
-    avg_maxThrust(N) = mean(Peak_Thrust)
-    std_maxThurst(N) = std(Peak_Thrust)
+    avg_maxThrust(N) = mean(Peak_Thrust);
+    std_maxThurst(N) = std(Peak_Thrust);
 
-    avg_Impules(N) = trapz(tot_data)
+    avg_Impules(N) = trapz(tot_data);
     
     %Calibration = w_avg_std(dataN,uncertainty,Time);
     %avg_curve(N,:) = Calibration(:,2);

@@ -7,7 +7,8 @@
 
 %% Clean Workspace and Housekeeping
 clear
-% clearvars
+clearvars
+clc
 close all
 
 % removes warnings for table variable names for a cleaner output
@@ -116,6 +117,9 @@ InducedDrag_Data = ...
 % Call Boost-Ascent Flight Dynamics Model
 
 % Call Glide Flight Dynamics Model
+% [GlideRange] = GlideDescent(LD_mod1, apogee, Design_Input, ATMOS, Weight_Data, WingLiftModel, WingLiftCurve, Count);
+[GlideRange] = GlideDescent(LD_mod1, 50, Design_Input, ATMOS, Weight_Data, WingLiftModel, WingLiftCurve, Count);
+
 
 
 %% Plotting
@@ -171,6 +175,8 @@ ylabel('L/D Ratio (-)');
 title('Lift over Drag Comparisons - Configuration 1.01');
 legend('L/D Cavallo','L/D Nita-Scholz','L/D Benchmark','Location','southeast');
 hold off
+
+%{
 
 %% Boost_Ascent Flight Profile Plots
 % Some setup to make plots more readable in color, look up the
@@ -266,4 +272,4 @@ set(0,'DefaultAxesColorOrder','default')
 
 
 
-
+%}
