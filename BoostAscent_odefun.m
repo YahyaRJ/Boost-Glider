@@ -81,7 +81,6 @@ end
 %% Calculate total drag
 dynamic_pressure = 0.5 .* rho_a .* (Va.^2);
 D = dynamic_pressure .* C_D .* S_ref;
-disp(D);
 
 %% Sum the forces
 % Assume that all forces exept gravity act in (or against) the direction
