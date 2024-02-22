@@ -45,12 +45,12 @@ Time = 0:0.001:0.5; % just go ahead and define this, note that it will be 501 lo
 ThrustCurves = zeros(length(Time),1);
 
 %% List what configuration is being used
-bottleSize = ; % [ml]
-waterSize = ;% [ml]
+bottleSize = 2000; % [ml]
+waterSize = 900;% [ml]
 % Be sure that the above matches up with the file name specified below. In
 % the full "Thrust" script, all of this data will be loaded automatically
 % for you
-testName = 'Static Test Stand Data/1250mL Bottle/Test_T02_W0625_B1250'; % Should be a string of the path to the data (including the data file name)
+testName = 'Variable Water Volume/Test_T01_W0500_B2000'; % Should be a string of the path to the data (including the data file name)
 
 % /////////////////////////////////////////////////////////////////////////
 % MODIFY THIS SECTION
@@ -65,12 +65,97 @@ data = data(:,3)*4.448; % take only the third column and converting from lbf to 
 
 %% Data Conditioning
 
+cleaned_data = zeros(f/2,1);
+step = 0:length(cleaned_data);
+cleaned_time = step*1/f;
+gravity = 9.81;
+water_weight = waterSize/1000*gravity;
+
+data(data(:)<4) = []; %Cleaning beginning data (4 Newtons)
+for i = 0:f/2 %Using data from start to end (.5 seconds)
+    cleaned_data(i+1) = data(i+1+mod(f,20));
+end
+cleaned_data = interp1(cleaned_time,cleaned_data,Time);
+%Created indexs for max thrust and estimation of where water is expelled
+[m,i] = max(cleaned_data);
+[mi,ind] = min(cleaned_data(Time>.2));
+ind = 200+ind; %Index correction because of the comparison used above
+
+Actual_Thrust_Time = ind/1000
+
+Peak_Thrust = m
+
+%Linear equation for the change in weight over time
+offset_eq = @(Time) (water_weight)/(Time(ind)*1000-...
+    Time(i)*1000)*Time + water_weight;
+offset_data = offset_eq(Time);
+%Correcting the data with offset consideration
+cleaned_data = cleaned_data-offset_data; 
+
+
+standard_dev = std(cleaned_data);
+
+Peak_Thrust_std = Peak_Thrust/standard_dev
+
+figure(1);
+plot(Time,cleaned_data);
+
 %% Data Fitting
+
+%Code that creates # of lines of best fits according to given stepsize
+%{ 
+stepsize = 20;
+g = 0;
+k = 0;
+
+for i = 0:stepsize-1
+    n = .5/stepsize;
+    if i == stepsize -1
+        k = 1;
+    end
+    newT = Time(Time >= i*n & Time <= (i+1)*n + k*.005);
+    newD = cleaned_data(Time >= i*n & Time <= (i+1)*n+ k*.005);
+    p = polyfit(newT,newD,3);
+    fit = polyval(p,newT);
+    figure(1);
+    hold on;
+    plot(newT,fit);
+    for j = 1:length(fit)
+        tot(j+i*length(fit))= fit(j);
+    end
+end
+%}
+
+
+%Splits the data into two portions.
+%First section records max thrust and the second section creates a fit for
+%the rest of the data. The two fits are then added into one congruent line
+%of best fit
+
+T1 = Time(Time <= Time(i));
+T2 = Time(Time > Time(i));
+D1 = cleaned_data((Time <= Time(i)));
+D2 = cleaned_data((Time > Time(i)));
+P1 = polyfit(T1,D1,5);
+P2 = polyfit(T2,D2,7);
+fit1 = polyval(P1,T1);
+fit2 = polyval(P2,T2);
+
+tot_fit = zeros(1,501);
+for i = 1:length(fit1)
+    tot_fit(i) = fit1(i);
+end
+for i = 1:length(fit2)
+    tot_fit(i+length(fit1)) = fit2(i);
+end
+figure(1);
+hold on;
+plot(Time,tot_fit)
+
+
 
 %% Sample onto the standard output array format
 
 % /////////////////////////////////////////////////////////////////////////
 % END OF SECTION TO MODIFY
 % /////////////////////////////////////////////////////////////////////////
-
-

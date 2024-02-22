@@ -63,8 +63,8 @@ for n = 1:Count
         f_taper = 0.0524*Design_Input.Taper_w(n)^4-0.15*Design_Input.Taper_w(n)^3+0.1659*Design_Input.Taper_w(n)^2-0.0706*Design_Input.Taper_w(n)+0.0119;
         e(n)=1/(1+f_taper*Design_Input.AR_w(n));
     else % If there is quarter chord sweep:
-        f_taper = ;
-        e(n) = ;
+        f_taper = 0.0524*Design_Input.Taper_w(n)^4-0.15*Design_Input.Taper_w(n)^3+0.1659*Design_Input.Taper_w(n)^2-0.0706*Design_Input.Taper_w(n)+0.0119;
+        e(n) = (1/(1+f_taper*Design_Input.AR_w(n))) * cosd(Design_Input.QuarterSweep_w(n));
     end
     % Linear fit to Airfoil lift data
     Cl = polyfit(AoA(1:12),Airfoil{n,(5:16)},1); % Reffer to MATLAB documentation for this function's usage
@@ -72,12 +72,14 @@ for n = 1:Count
     AoA_0(n)=roots(Cl); % 2D airfoil zero lift AoA (deg)
     AirfoilLiftCurve(n,:) = polyval(Cl,AoA);
 
+    Cd(n,:) = Airfoil{n,(24:41)};
+
     % 3D Wing Lift Curve Slope Model
-    a(n)= ; % 3-D lift curve slope
-    WingLiftCurve(n,:) = ; % Evaluate the 3D coefficient of lift values at AoA's in array (AoA) definied above
+    a(n)= a_0(n)/(1+((57.3*a_0(n))/ (pi* e(n) *Design_Input.AR_w(n)))); % 3-D lift curve slope
+    WingLiftCurve(n,:) = a(n)*(AoA-AoA_0(n)); % Evaluate the 3D coefficient of lift values at AoA's in array (AoA) definied above
 
     % 3D Wing Drag Coefficient
-    WingDragCurve(n,:) = ; % Just the 3D coefficient of drag values at AoA's in array (AoA) definied above
+    WingDragCurve(n,:) = Cd(n,:) + ((WingLiftCurve(n,:)).^2)./(pi*e(n)*Design_Input.AR_w(n)); % Just the 3D coefficient of drag values at AoA's in array (AoA) definied above
 % /////////////////////////////////////////////////////////////////////////
 % END OF SECTION TO MODIFY
 % /////////////////////////////////////////////////////////////////////////

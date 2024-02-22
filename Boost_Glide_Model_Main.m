@@ -15,7 +15,7 @@ warning('OFF', 'MATLAB:table:ModifiedAndSavedVarnames')
 
 %% Import and Read Aircraft Design File
 Design_Input = readtable("Design Input File.xlsx",'Sheet','Input','ReadRowNames',true); %Read in Aircraft Geometry File
-Count = height(Design_Input); %Number of different aircraft configurations in geometry file
+Count = 1; % height(Design_Input); %Number of different aircraft configurations in geometry file
 
 % Import Airfoil Data File
 Airfoil = readtable("Design Input File.xlsx",'Sheet','Airfoil_Data'); %Read in Airfoil Data
@@ -94,7 +94,7 @@ WingGeo_Data = WingGeo(Design_Input,Count); %Calculate specific wing geometry fr
 
 % Call Induced Drag Model Function
 InducedDrag_Data = ...
-    InducedDrag(Design_Input,WingLiftModel,WingLiftCurve,WingDragCurve,WingGeo_Data,Count);
+    InducedDrag(Design_Input,WingLiftModel,WingLiftCurve,WingDragCurve,WingGeo_Data,Count,Airfoil,Parasite_Drag_Data);
 
 % Call Complete Drag Polar Function
 [DragPolar_mod1,DragPolar_mod2,DragPolar_mod3] = ...
@@ -109,15 +109,17 @@ InducedDrag_Data = ...
     Weight(Design_Input,Count,WingGeo_Data,Airfoil,Material_Data);
 
 %% Calculations - Dynamic Models
+%%To Be provided at a later date
 % Call Thrust Model
-[ThrustCurves, Time, statsStruct] = Thrust();
+[ThrustCurves, Time] = Thrust();
+
 % Call Boost-Ascent Flight Dynamics Model
-[apogee, hApogee, stateStruct] = BoostAscent(Design_Input, ATMOS, Parasite_Drag_Data, Weight_Data, ThrustCurves, Time, Count);
+
 % Call Glide Flight Dynamics Model
-[GlideRange] = GlideDescent(LD_mod1, apogee, Design_Input, ATMOS, Weight_Data, WingLiftModel, WingLiftCurve, Count);
 
 
 %% Plotting
+
 %Lift Curves
 figure
 hold on
@@ -139,7 +141,7 @@ plot(WingLiftCurve{1,:},WingDragCurve{1,:});
 plot(Benchmark.CL(:),Benchmark.CD(:));
 plot(WingLiftCurve{1,:},DragPolar_mod1{1,:});
 plot(WingLiftCurve{1,:},DragPolar_mod2{1,:});
-%plot(WingLiftCurve,DragPolar_mod3{1,:});
+plot(WingLiftCurve{1,:},DragPolar_mod3{1,:});
 xlabel('Coefficient of Lift (CL)');
 ylabel('Coefficient of Drag (CD)');
 title('Drag Polar Model Comparison');
@@ -162,7 +164,7 @@ figure
 hold on
 plot(WingLiftCurve{1,:},LD_mod1{1,:},'--');
 plot(WingLiftCurve{1,:},LD_mod2{1,:},'--');
-%plot(WingLiftCurve{1,:},LD_mod3{1,:},'--');
+plot(WingLiftCurve{1,:},LD_mod3{1,:},'--');
 plot(WingLiftCurve{1,:},LD_benchmark{1,:});
 xlabel('Coefficient of Lift (CL)');
 ylabel('L/D Ratio (-)');
@@ -170,48 +172,9 @@ title('Lift over Drag Comparisons - Configuration 1.01');
 legend('L/D Cavallo','L/D Nita-Scholz','L/D Benchmark','Location','southeast');
 hold off
 
-%% Static Test Thrust Profle Model Plots
-num2Ltests = 7; % Just hard code the number of 2L tests in the ThrustCurves table
-cmap = colormap(parula(num2Ltests));
-set(0,'DefaultAxesColorOrder',cmap)
-set(gca(),'ColorOrder',cmap);
-figure(10)
-for i = 1:num2Ltests % Looping over just the 2L data in ThrustCurves
-    plot(Time, ThrustCurves{:, i}, DisplayName = [ThrustCurves.Properties.VariableNames{i}(6:end), ' mL'])
-    if i == 1
-        hold on
-    end
-end
-xlabel('Test Time [s]');
-ylabel('Fitted Thrust [N]');
-title('2L Fitted Thrust Profiles');
-legend();
-grid on
-hold off
-
-cmap = colormap(parula(width(ThrustCurves)-num2Ltests));
-set(0,'DefaultAxesColorOrder',cmap)
-set(gca(),'ColorOrder',cmap);
-figure(11)
-for i = num2Ltests+1:width(ThrustCurves) % Looping over the rest of the data in ThrustCurves
-    plot(Time, ThrustCurves{:, i}, DisplayName = [ThrustCurves.Properties.VariableNames{i}(6:end), ' mL'])
-    if i == num2Ltests+1
-        hold on
-    end
-end
-xlabel('Test Time [s]');
-ylabel('Fitted Thrust [N]');
-title('1.25L Fitted Thrust Profiles');
-legend();
-grid on
-hold off
-
 %% Boost_Ascent Flight Profile Plots
 % Some setup to make plots more readable in color, look up the
 % documentation for 'cmap' for other color map options
-cmap = colormap(parula(Count));
-set(0,'DefaultAxesColorOrder',cmap)
-set(gca(),'ColorOrder',cmap);
 
 fields = fieldnames(stateStruct);
 figure(20)
@@ -230,6 +193,9 @@ title('Boost 2D Total Distance Traveled');
 legend();
 grid on
 hold off
+cmap = colormap(parula(Count));
+set(0,'DefaultAxesColorOrder',cmap)
+set(gca(),'ColorOrder',cmap);
 
 figure(21)
 for n = 1:Count
@@ -297,3 +263,7 @@ hold off
 
 %% Reset default color order
 set(0,'DefaultAxesColorOrder','default')
+
+
+
+

@@ -24,15 +24,22 @@ DragPolar_mod1 = zeros(Count,AoA_Count);
 DragPolar_mod2 = zeros(Count,AoA_Count);
 DragPolar_mod3 = zeros(Count,AoA_Count);
 
-
 %% Loop through different configurations
 for n = 1:Count
 % /////////////////////////////////////////////////////////////////////////
 % MODIFY THIS SECTION
 % /////////////////////////////////////////////////////////////////////////
-    DragPolar_mod1(n,:)= ;
-    DragPolar_mod2(n,:)= ;
-    DragPolar_mod3(n,:)= ;
+    Oswalds_mod1 = InducedDrag_Data.eo_mod1(n);
+    Oswalds_mod2 = InducedDrag_Data.eo_mod2(n);
+    Oswalds_mod3 = InducedDrag_Data.eo_mod3(n);
+    CDo = Parasite_Drag_Data.CDo(n);
+    AR = Design_Input.AR_w(n);
+    C_L = WingLiftCurve{n,:};
+
+    DragPolar_mod1(n,:)= CDo + (C_L.^2)./(pi * Oswalds_mod1 * AR);
+    DragPolar_mod2(n,:)= CDo + (C_L.^2)./(pi * Oswalds_mod2 * AR);
+    DragPolar_mod3(n,:)= CDo + (C_L.^2)./(pi * Oswalds_mod3 * AR);
+
 % /////////////////////////////////////////////////////////////////////////
 % END OF SECTION TO MODIFY
 % /////////////////////////////////////////////////////////////////////////
