@@ -177,11 +177,14 @@ title('Lift over Drag Comparisons - Configuration 1.01');
 legend('L/D Cavallo','L/D Nita-Scholz','L/D Benchmark','Location','southeast');
 hold off
 
-%{
+
 
 %% Boost_Ascent Flight Profile Plots
 % Some setup to make plots more readable in color, look up the
 % documentation for 'cmap' for other color map options
+cmap = colormap(parula(Count));
+set(0,'DefaultAxesColorOrder',cmap)
+set(gca(),'ColorOrder',cmap);
 
 fields = fieldnames(stateStruct);
 figure(20)
@@ -200,9 +203,6 @@ title('Boost 2D Total Distance Traveled');
 legend();
 grid on
 hold off
-cmap = colormap(parula(Count));
-set(0,'DefaultAxesColorOrder',cmap)
-set(gca(),'ColorOrder',cmap);
 
 figure(21)
 for n = 1:Count
@@ -270,7 +270,3 @@ hold off
 
 %% Reset default color order
 set(0,'DefaultAxesColorOrder','default')
-
-
-
-%}

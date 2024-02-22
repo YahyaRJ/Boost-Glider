@@ -48,9 +48,9 @@ azim    = consts(12); % Launch Azimuth [degrees], measured CW from north when lo
 % MODIFY THIS SECTION
 % /////////////////////////////////////////////////////////////////////////
 %% Wind Triangle
-Vax = ;% x air-relative velocity (inertial frame)
-Vay = ;% y air-relative velocity (inertial frame)
-Va = ; % Airspeed (magnitude, body frame)
+Vax = Vx - Wx;% x air-relative velocity (inertial frame)
+Vay = Vy - Wy;% y air-relative velocity (inertial frame)
+Va = sqrt(Vax^2 + Vay^2); % Airspeed (magnitude, body frame)
 
 %% Set velocity direction
 % Constant if still on the rails
@@ -79,7 +79,8 @@ else
 end
 
 %% Calculate total drag
-D = ;
+dynamic_pressure = 0.5 .* rho_a .* (Va.^2);
+D = dynamic_pressure .* C_D .* S_ref;
 
 %% Sum the forces
 % Assume that all forces exept gravity act in (or against) the direction
@@ -89,15 +90,15 @@ D = ;
 % gravity acts only in -z.
 
 % Sum of the forces
-Fx = ;
-Fy = ;
-Fz = ;
+Fx = hBod_x * (T-D) ;
+Fy = hBod_y * (T-D);
+Fz = (m * g) + (hBod_z * (T - D));
 
 %% Calculate the derivatives we need to pass out
 % Change in postition = Acceleration 
-dVdt_x = ;
-dVdt_y = ;
-dVdt_z = ;
+dVdt_x = Fx ./ m;
+dVdt_y = Fy ./ m;
+dVdt_z = Fz ./ m;
 
 % Now we do some error checking:
 % If we are not yet producing enough thrust to get a positive component of
@@ -112,15 +113,15 @@ if sqrt(x^2+y^2+z^2) <= 0.05 && dVdt_z > 0% still on rails
 end
 
 % Change in postition = Velocity
-dxdt = ;
-dydt = ;
-dzdt = ;
+dxdt = Vx;
+dydt = Vy;
+dzdt = Vz;
 
 % Mass flow rate
 if m > m_empty % if water is not  yet exausted as measured by weight
-    mDot = ;
+    mDot = 0.1 .* T;
 else % ignore any mass change from expulsed air
-    mDot = ;
+    mDot = 0;
 end
 % /////////////////////////////////////////////////////////////////////////
 % END OF SECTION TO MODIFY
