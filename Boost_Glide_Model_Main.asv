@@ -184,7 +184,7 @@ hold off
 fields = fieldnames(stateStruct);
 figure(20)
 
-cmap = colormap(jet(Count+1));
+cmap = colormap(parula(Count));
 set(0,'DefaultAxesColorOrder',cmap)
 set(gca(),'ColorOrder',cmap);
 
