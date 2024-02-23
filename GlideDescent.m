@@ -45,7 +45,7 @@ for n = 1:Count
     LDmax(n) = M;
 
     %% Find best glide range
-    bestGlide(n) = LDmax(n) .* apogee;
+    bestGlide(n) = LDmax(n) .* apogee(n);
 
     %% GLide angle
     theta(n) = atand(1 ./ LDmax(n)); %in degrees

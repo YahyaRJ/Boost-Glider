@@ -16,7 +16,9 @@ warning('OFF', 'MATLAB:table:ModifiedAndSavedVarnames')
 
 %% Import and Read Aircraft Design File
 Design_Input = readtable("Design Input File.xlsx",'Sheet','Input','ReadRowNames',true); %Read in Aircraft Geometry File
-Count = 1; % height(Design_Input); %Number of different aircraft configurations in geometry file
+%Count = 1; % height(Design_Input); %Number of different aircraft configurations in geometry file
+Count = height(Design_Input); %Number of different aircraft configurations in geometry file
+
 
 % Import Airfoil Data File
 Airfoil = readtable("Design Input File.xlsx",'Sheet','Airfoil_Data'); %Read in Airfoil Data
@@ -182,7 +184,7 @@ hold off
 % Some setup to make plots more readable in color, look up the
 % documentation for 'cmap' for other color map options
 fields = fieldnames(stateStruct);
-figure(20)
+figure()
 
 cmap = colormap(jet(Count+1));
 set(0,'DefaultAxesColorOrder',cmap)
@@ -204,7 +206,7 @@ legend();
 grid on
 hold off
 
-figure(21)
+figure()
 for n = 1:Count
     plot(stateStruct.(fields{n}).data(:, 4),...
             stateStruct.(fields{n}).data(:, 5), ...
@@ -220,7 +222,7 @@ legend();
 grid on
 hold off
 
-figure(22)
+figure()
 for n = 1:Count    
     plot3(stateStruct.(fields{n}).data(:, 4),...
             stateStruct.(fields{n}).data(:, 5),...
@@ -241,7 +243,7 @@ grid on
 axis equal
 hold off
 
-figure(23)
+figure()
 for n = 1:Count
     Wx = -Design_Input.V_wind(n)*cosd(Design_Input.Wind_Az(n)); 
     Wy = -Design_Input.V_wind(n)*sind(Design_Input.Wind_Az(n));

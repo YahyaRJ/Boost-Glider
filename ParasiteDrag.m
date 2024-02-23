@@ -112,18 +112,18 @@ for n = 1:Count
 
     %% Misc. and L&P Contributions to CDo
     if Design_Input.Abase_f(n)~=0 % If this component exists:
-        D_q_base = (.139+.419*(M-.161)^2)*pi*(.055)^2
+        D_q_base = (.139+.419*(M-.161)^2)*pi*(.055)^2;
         CDo_misc(n) = D_q_base/Design_Input.Sref_w(n); %Contribution of base drag to CDo
     end
     
     %% Leakage and Proturbance Contribution to CDo
     PercentLeakage = 15; % Your choice depending on how bad you think your fabrication will be 
-    CDo_lp(n) = CDo_f*PercentLeakage/100; %Increase in parasite drag due to leakage and protuberance usually 3-15% of total CDo, but here just taking fuselage contribution
+    CDo_lp(n) = CDo_f(n)*PercentLeakage./100; %Increase in parasite drag due to leakage and protuberance usually 3-15% of total CDo, but here just taking fuselage contribution
  
     %%Total Parasite Drag and Wetted Area
     Swet_tot(n) = Design_Input.Swet_w(n)+Design_Input.Swet_f(n)+Design_Input.Swet_h1(n)+Design_Input.Swet_h2(n)+...
         Design_Input.Swet_v1(n)+Design_Input.Swet_v2(n); %Total Wetted Area
-    CDo(n) = ((CDo_w+CDo_f+CDo_v1+CDo_v2+CDo_h1+CDo_h2)/(Design_Input.Sref_w(n)))+CDo_misc+CDo_lp(n); %Total Parasite Drag Coefficient
+    CDo(n) = ((CDo_w(n)+CDo_f(n)+CDo_v1(n)+CDo_v2(n)+CDo_h1(n)+CDo_h2(n))/(Design_Input.Sref_w(n)))+CDo_misc(n)+CDo_lp(n); %Total Parasite Drag Coefficient
 
 % /////////////////////////////////////////////////////////////////////////
 % END OF SECTION TO MODIFY
