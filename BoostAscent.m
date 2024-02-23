@@ -107,7 +107,8 @@ for n = 1:Count
     [t, S] = ode45(@(t, S) BoostAscent_odefun(t, S, consts, thrustVec, Time), intSpan, S0, opts);
 
     %% Find outputs of interest
-    [apogee(n), iApogee] = max(S(:, 6));
+    [apogee(n), iApogee] = min(S(:, 6));
+    apogee(n) = -1 .* apogee(n);
     hApogee(n, :) = S(iApogee, 4:6)/norm(S(iApogee, 4:6));
 
     %% Store full output

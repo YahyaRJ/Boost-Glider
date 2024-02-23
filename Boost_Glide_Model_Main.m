@@ -178,6 +178,21 @@ title('Lift over Drag Comparisons - Configuration 1.01');
 legend('L/D Cavallo','L/D Nita-Scholz','L/D Benchmark','Location','southeast');
 hold off
 
+%% Thrust Plots
+
+figure();
+hold on
+for i = 1:width(ThrustCurves)
+    curve = ThrustCurves{:, i};
+    plot(Time,curve,"MarkerFaceColor","auto");
+end
+hold off
+xlabel('Time (s)');
+ylabel('Thrust (N)');
+title('Thrust Profiles for Different Scenarios');
+legend(ThrustCurves.Properties.VariableNames,"Location","bestoutside");
+grid on
+
 
 
 %% Boost_Ascent Flight Profile Plots
