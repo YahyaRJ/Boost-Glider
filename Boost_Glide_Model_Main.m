@@ -287,3 +287,36 @@ hold off
 
 %% Reset default color order
 set(0,'DefaultAxesColorOrder','default')
+
+
+%% 2D Glide Range Estimation for Tempest 2nd wind config
+
+figure()
+Range = GlideRange{2, 1}; % Range
+height = apogee(2); %height
+[dumby_v, idistance] = min(stateStruct.Config_2.data(:, 6));
+rocket_distance = stateStruct.Config_2.data(idistance,4);
+
+x1 = [0 rocket_distance];
+y1 = [0 height];
+pl1 = line(x1,y1);
+pl1.Color = "r";
+pl1.LineWidth = 3;
+
+hold on;
+x2 = [rocket_distance Range];
+y2 = [height 0];
+pl2 = line(x2, y2);
+pl2.Color = "b";
+pl2.LineWidth = 3;
+xline((100+rocket_distance),"LineStyle","--");
+hold off;
+
+xlabel('Distance (m)');
+ylabel('Height (m)');
+title('Rough Glide Range Estimation for Tempest');
+grid on;
+xlim([-1 120]);
+legend("boost ascent", "glide descent", "design requirement");
+
+
