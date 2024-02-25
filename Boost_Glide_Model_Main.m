@@ -316,11 +316,12 @@ for n=1:Count
 end
 hold off;
 xlabel('Distance (m)');
-xline((100+rocket_distance),"LineStyle","--","Label","Design Requirement");
+%xline((100+rocket_distance),"LineStyle","--","Label","Design Requirement");
 ylabel('Height (m)');
 title('Rough Glide Range Estimation');
 grid on;
-xlim([-10 120]);
+%xlim([-10 120]);
+axis equal;
 legend(handles,labels,"Location","bestoutside");
 
 
