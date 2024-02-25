@@ -119,7 +119,7 @@ dzdt = Vz;
 
 % Mass flow rate
 if m > m_empty % if water is not  yet exausted as measured by weight
-    %% how to calculate this without exit velocity or pressure or discharge coefficient?
+    %mDot = sqrt(rho_w .* A_exit .* abs(T));
     mDot = 1;
 else % ignore any mass change from expulsed air
     mDot = 0;
