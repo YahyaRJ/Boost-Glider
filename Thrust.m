@@ -106,7 +106,7 @@ for N = 1:numConfigs % use upper case N to distiguish that it is counting someth
         index = find(data > 25);
         
         
-        %data(data(:)<3) = []; %Cleaning beginning data (4 Newtons)
+        %data(data(:)<1) = []; %Cleaning beginning data (2 Newtons)
         for j = 0:f/2 %Using data from start to end (.5 seconds)
             cleaned_data(j+1) = data(j+1+index(1)-50); %if something breaks try doing data(j+1+mod(f,20)) instead of data(j+1)
         end
@@ -154,11 +154,11 @@ for N = 1:numConfigs % use upper case N to distiguish that it is counting someth
         
         standard_dev = std(cleaned_data);
         
-        %{
+        
         figure(N)
         hold on;
         plot(Time,cleaned_data)
-        %}
+        
         
 
         
@@ -217,10 +217,10 @@ for N = 1:numConfigs % use upper case N to distiguish that it is counting someth
         tot_fit(i+length(fit1)) = fit2(i);
     end
     model(N,:) = tot_fit;
-    % figure(N);
-    % plot(Time,tot_fit)
-    % hold on; 
-    % plot(Time,data)
+    figure(N);
+    plot(Time,tot_fit)
+    hold on; 
+     plot(Time,data)
 
 
 
