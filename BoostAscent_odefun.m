@@ -49,7 +49,9 @@ azim    = consts(12); % Launch Azimuth [degrees], measured CW from north when lo
 % /////////////////////////////////////////////////////////////////////////
 %% Wind Triangle
 Vax = Vx - Wx;% x air-relative velocity (inertial frame)
+
 Vay = Vy - Wy;% y air-relative velocity (inertial frame)
+
 Va = sqrt(Vax^2 + Vay^2); % Airspeed (magnitude, body frame)
 
 %% Set velocity direction
@@ -79,8 +81,8 @@ else
 end
 
 %% Calculate total drag
-dynamic_pressure = 0.5 .* rho_a .* (Va.^2);
-D = dynamic_pressure .* C_D .* S_ref;
+dynamic_pressure = 0.5 .* rho_a .* (Va.^2); %checks out
+D = dynamic_pressure .* C_D .* S_ref; % checks out
 
 %% Sum the forces
 % Assume that all forces exept gravity act in (or against) the direction
@@ -119,8 +121,8 @@ dzdt = Vz;
 
 % Mass flow rate
 if m > m_empty % if water is not  yet exausted as measured by weight
-    %mDot = sqrt(rho_w .* A_exit .* abs(T));
-    mDot = 1;
+    mDot = -sqrt(rho_w .* A_exit .* abs(T));  %stupid, had wrong sign
+    %mDot = 1;      
 else % ignore any mass change from expulsed air
     mDot = 0;
 end
