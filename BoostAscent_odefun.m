@@ -132,3 +132,127 @@ end
 % This needs to be in the same 
 dSdt = [dVdt_x; dVdt_y; dVdt_z; dxdt; dydt; dzdt; mDot];
 end
+
+
+%{
+
+
+function ddt = RocketODE(t, X, const)
+
+    %calculate air pressure inside to differentiate between Stage 2 or 3
+    P_air = ((X(7) ./ const.m_i_air).^const.gamma) .* const.P_air_end;
+    
+    if X(6) < const.V_B 
+        %Stage 1
+        
+        %calculate pressure
+        P = ((const.V_i_air/X(6))^const.gamma)*const.p_0;
+
+        %no change in mass of air
+        ddt(7) = 0;
+
+        % change in mass of rocket
+        v_e = sqrt( (2*(P - const.p_a)) ./ (const.rho_w));
+        ddt(5) = -const.c_dis * const.rho_w * const.a_e * v_e;
+
+        %Equation 10:
+        ddt(6) = const.c_dis .* const.a_e .* sqrt((2./const.rho_w).* ...
+            (const.p_0.*((const.V_i_air/X(6))^const.gamma)-const.p_a));
+
+        %thrust
+        F = 2*const.c_dis*(P-const.p_a)*const.a_e;
+
+    elseif P_air > const.p_a
+        %Stage 2
+        
+        %no change in volume of air
+        ddt(6) = 0;
+
+        %calculate density and temperature of air inside
+        rho_air_inside = X(7) / const.V_B;
+        T_air_inside = P_air ./ (const.R_air .* rho_air_inside);
+        
+        %ciritical pressure
+        P_critical = P_air*((2/(const.gamma+1))^(const.gamma/(const.gamma-1)));
+
+        %flow choked?
+        if P_critical > const.p_a
+            %choked
+
+            %exit pressure, temperature, density and velocity
+            P_exit = P_critical;
+            T_exit = (2/(const.gamma+1))*T_air_inside;
+            rho_exit = P_exit/(const.R_air*T_exit);
+            v_exit = sqrt(const.gamma .* const.R_air .* T_exit);
+
+        else
+            %not choked
+
+            %exit pressure, temperature, density and velocity
+            P_exit = const.p_a;
+            %exit Mach number
+            %Mach_exit = sqrt((2/(const.gamma - 1)) * ...
+            % (exp((const.gamma - 1)/const.gamma * log(P_air/const.p_a)) - 1));
+            Mach_exit = sqrt((2/(const.gamma - 1)) * ((P_air/const.p_a)^(0.4/1.4) - 1));
+            T_exit = T_air_inside / (1+((const.gamma - 1)/2)*(Mach_exit^2));
+            rho_exit = const.p_a/(const.R_air*T_exit);
+            v_exit = Mach_exit .* sqrt(const.gamma .* const.R_air .* T_exit);
+
+        end
+        
+        %air mass flow
+        m_dot_air = const.c_dis * rho_exit * const.a_e * v_exit;
+
+        %change in mass of air in the rocket, equation 21
+        ddt(7) = -m_dot_air;
+
+        %change in mass of rocket
+        ddt(5) = ddt(7);
+
+        %thrust 
+        F = (m_dot_air * v_exit) + (P_exit - const.p_a)*const.a_e;
+
+    else
+        %Stage 3
+
+        %no change in mass of bottle
+        ddt(5) = 0;
+        %no change in volume of air
+        ddt(6) = 0;
+        %no change in mass of air
+        ddt(7) = 0;
+        %no thrust generated
+        F = 0;
+    end
+    
+    %figure out the heading
+    if sqrt(X(1)^2 + (X(3) - const.z_0)^2) < const.l_s
+        % On test stand
+        heading_x = cosd(const.theta_i); 
+        heading_z = sind(const.theta_i);
+    else
+        % Not on test stand
+        heading_x = X(2) / sqrt(X(2)^2 + X(4)^2);
+        heading_z = X(4) / sqrt(X(2)^2 + X(4)^2);
+    end
+    %h_hat = heading_x + heading_z;
+
+    %drag
+    v_h = sqrt(X(2)^2 + X(4)^2);
+    D = (const.rho_air/2)*(v_h^2) * const.C_D * const.a_B;
+
+    % velocity in the x direction
+    ddt(1) = X(2);
+    % velocity in the z direction
+    ddt(3) = X(4);
+    % acceleration in the x direction
+    ddt(2) = ((F-D)*heading_x)/X(5);
+    % acceleration in the z direction
+    ddt(4) = (((F-D)*heading_z)/X(5))-const.g;
+    
+    % transpose for ODE45
+    ddt = ddt';
+    
+end
+
+%}

@@ -242,3 +242,58 @@ end
 ThrustCurves = array2table(ThrustCurves);
 ThrustCurves.Properties.VariableNames = ThrustCurvesNames;
 end
+
+
+
+%{
+
+function thrust = thrustFunc(t, V_air, m_air, const)
+    for i = 1:length(t)
+        %pressure of air inside rocket assuming stage 2 or 3
+        P_air_inside = ((m_air(i) / const.m_i_air)^const.gamma)*const.P_air_end;
+        if V_air(i) < const.V_B
+        %phase 1
+            %pressure inside
+            P = ((const.V_i_air/V_air(i))^const.gamma)*const.p_0;
+            % thrust
+            thrust(i) = 2* const.c_dis*(P-const.p_a)*const.a_e;
+        elseif P_air_inside > const.p_a
+            %air density
+            rho = m_air(i)/const.V_B;
+            % temperature
+            T = P_air_inside/(rho*const.R_air);
+            % critical pressure
+            P_critical = P_air_inside*((2/(const.gamma+1))^ ...
+                (const.gamma/(const.gamma-1)));
+            %if choked
+            if P_critical > const.p_a
+                % exit P, T, rho, v
+                P_exit = P_critical;
+                T_exit = (2/(const.gamma+1))*T;
+                rho_exit = P_exit/(const.R_air*T_exit);
+                v_exit = sqrt(const.gamma*const.R_air*T_exit);
+            %not choked
+            else
+                % exit P, T, rho, v
+                P_exit = const.p_a;
+                Mach_exit = sqrt((2/(const.gamma - 1)) * ((P_air_inside/const.p_a)^(0.4/1.4) - 1));
+                T_exit = T / (1+((const.gamma - 1)/2)*(Mach_exit^2));
+                rho_exit = const.p_a/(const.R_air*T_exit);
+                v_exit = Mach_exit .* sqrt(const.gamma .* const.R_air .* T_exit);
+            end
+            %mass flow
+            m_dot_air = const.c_dis * rho_exit * const.a_e * v_exit;
+
+            %thrust 
+            thrust(i) = (m_dot_air * v_exit) + (P_exit - const.p_a)*const.a_e;
+
+        else
+        %phase 3
+            thrust(i) = 0;
+        end
+            
+    end
+end
+
+
+%}
