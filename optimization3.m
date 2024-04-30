@@ -123,7 +123,7 @@ legend(handles,labels,"Location","bestoutside");
 
 
 
-%% Fuselage Length Optimization
+%% Finenss Ratio Optimization
 figure();
 fuslength = 0.29:0.1:1.19;
 yyaxis left;
@@ -147,15 +147,6 @@ plot(fusdiam,GlideRange{12:21, 1},"LineWidth",2);
 ylabel('Glide Gange(m)');
 xlabel('Fuselage Diameter(m)');
 title('Fuselage Diameter Optimization');
-
-
-%%
-
-for i=1:15
-    figure();
-    plot(ThrustCurves{:,i});
-end
-
 
 
 %% Functions

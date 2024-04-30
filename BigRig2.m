@@ -295,7 +295,7 @@ labels = {};
 for n=1:Count
     Range = GlideRange{n, 1}; % Range
     height = apogee(n); %height
-    [dumby_v, idistance] = min(stateStruct.(['Config_',num2str(n)]).data(:, 6));
+    [dumby_v, idistance] = max(stateStruct.(['Config_',num2str(n)]).data(:, 6));
     rocket_distance = stateStruct.(['Config_',num2str(n)]).data(idistance,4);
 
     x1 = [0 rocket_distance];

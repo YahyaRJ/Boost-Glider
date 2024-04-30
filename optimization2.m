@@ -278,7 +278,7 @@ title('Fuselage Length Optimization');
 %% Fuselage Diameter Optimization
 
 figure();
-fusdiam = 0.08:0.005:0.125;
+fusdiam = 0.01:0.005:0.125;
 yyaxis left;
 plot(fusdiam,apogee(32:41),"LineWidth",2);
 ylabel('Rocket Apogee(m)');

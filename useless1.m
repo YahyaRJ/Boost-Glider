@@ -17,7 +17,7 @@ aspect_ratio = combinations(:,1).^2 ./ combinations(:,2);
 % Add aspect ratio as the third column
 combinations = [combinations, aspect_ratio];
 
-disp(combinations);
+%disp(combinations);
 
 a = [1,2,3];
 b= [4,5,6];

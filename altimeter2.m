@@ -3,7 +3,7 @@ clc
 close all
 
 %load data
-data = load('boost3');
+data = load('boost3'); %wrong data
 T = data(:,2)
 % We have to convert pressure P from mBar to Pa,and input to atmospalt
 P = data(:,2);
@@ -15,6 +15,3 @@ init_alt = h;
 end
 % Subtract the initial altitude out so that relative altitude is displayed
 H = h - init_alt; %Height diff in m
-
-figure();
-plot(H);

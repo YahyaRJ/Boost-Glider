@@ -76,19 +76,6 @@ InducedDrag_Data = ...
 % Call Boost-Ascent Flight Dynamics Model
 [apogee, hApogee, stateStruct] = BoostAscent(Design_Input, ATMOS, Parasite_Drag_Data, Weight_Data, ThrustCurves, Time, Count);
 
-apogee2 = ones(Count,1) .* 16;
 
 % Call Glide Flight Dynamics Model
 [GlideRange] = GlideDescent(LD_mod1, apogee, Design_Input, ATMOS, Weight_Data, WingLiftModel, WingLiftCurve, Count);
-[GlideRange2] = GlideDescent(LD_mod1, apogee2, Design_Input, ATMOS, Weight_Data, WingLiftModel, WingLiftCurve, Count);
-
-%%
-wingspan_values = 0.01:0.01:1.0;
-wing_planform_area_values = 0.01:0.01:1.0;
-combinations = combvec(wingspan_values, wing_planform_area_values);
-combinations = combinations';
-aspect_ratio = combinations(:,1).^2 ./ combinations(:,2);
-maxapogee = max(apogee);
-maxglide = max(GlideRange{:,1});
-figure();
-plot(GlideRange2{:,1});
